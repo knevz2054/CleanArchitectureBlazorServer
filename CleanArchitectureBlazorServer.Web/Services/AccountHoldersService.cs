@@ -22,39 +22,9 @@ namespace CleanArchitectureBlazorServer.Web.Services
             _mediator = mediator;
             _mapper = mapper;
         }
+
         public async Task<ResponseWrapper<int>> AddAccountHolderAsync(CreateAccountHolder createAccountHolder)
         {
-
-            //var accountHolderEntity = _mapper.Map<AccountHolder>(createAccountHolder);
-
-            //var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
-            //await writeRepo.AddAsync(accountHolderEntity);
-            //await _unitOfWork.CommitAsync(CancellationToken.None);
-
-            //return new ResponseWrapper<int>().Success(accountHolderEntity.Id, "Account holder added successfully.");
-            // Map DTO to entity
-
-            //var accountHolderEntity = _mapper.Map<AccountHolder>(createAccountHolder);
-
-            //// Get the read repository
-            //var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
-
-            //// Check if an account holder with the same unique identifier exists
-            //var existingEmail = await readRepo.Entities
-            //    .FirstOrDefaultAsync(a => a.Email == accountHolderEntity.Email); // Adjust the condition to your unique identifier
-
-            //if (existingEmail != null)
-            //{
-            //    return new ResponseWrapper<int>().Failed("Account holder with the same email already exists.");
-            //}
-
-            //// Add new account holder
-            //var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
-            //await writeRepo.AddAsync(accountHolderEntity);
-            //await _unitOfWork.CommitAsync(CancellationToken.None);
-
-            //return new ResponseWrapper<int>().Success(accountHolderEntity.Id, "Account holder added successfully.");
-
             var command = new CreateAccountHolderCommand()
             {
                 CreateAccountHolder = createAccountHolder
