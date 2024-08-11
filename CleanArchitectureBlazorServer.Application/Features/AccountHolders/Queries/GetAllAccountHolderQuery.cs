@@ -14,6 +14,7 @@ namespace CleanArchitectureBlazorServer.Application.Features.AccountHolders.Quer
 {
     public class GetAllAccountHolderQuery : IRequest<ResponseWrapper<List<AccountHolderResponse>>>
     {
+
     }
 
     public class GetAllAccountHolderQueryHandler : IRequestHandler<GetAllAccountHolderQuery, ResponseWrapper<List<AccountHolderResponse>>>

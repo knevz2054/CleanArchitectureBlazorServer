@@ -14,7 +14,7 @@ namespace CleanArchitectureBlazorServer.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
         private bool disposed;
-        private Hashtable _repositories;
+        private Hashtable _repositories = new Hashtable();
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;

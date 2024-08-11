@@ -16,6 +16,7 @@ namespace CleanArchitectureBlazorServer.Common.Wrapper
         {
             IsSuccessful = true;
             Messages = [message];
+            //Messages = new List<string> { message };
             Data = data;
 
             return this;
@@ -25,7 +26,7 @@ namespace CleanArchitectureBlazorServer.Common.Wrapper
         {
             IsSuccessful = false;
             Messages = [message];
-
+            //Messages = new List<string> { message };
             return this;
         }
     }

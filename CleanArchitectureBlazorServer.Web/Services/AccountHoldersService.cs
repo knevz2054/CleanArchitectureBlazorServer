@@ -1,111 +1,117 @@
 ﻿using AutoMapper;
+using CleanArchitectureBlazorServer.Application.Features.AccountHolders.Commands;
+using CleanArchitectureBlazorServer.Application.Features.AccountHolders.Queries;
 using CleanArchitectureBlazorServer.Application.Repositories;
 using CleanArchitectureBlazorServer.Common.Models;
 using CleanArchitectureBlazorServer.Common.Requests;
 using CleanArchitectureBlazorServer.Common.Responses;
 using CleanArchitectureBlazorServer.Common.Wrapper;
 using CleanArchitectureBlazorServer.Infrastructure.Contexts;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitectureBlazorServer.Web.Services
 {
     public class AccountHoldersService : IAccountHoldersService
     {
-        private readonly IUnitOfWork<int> _unitOfWork;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public AccountHoldersService(IUnitOfWork<int> unitOfWork, IMapper mapper)
+        public AccountHoldersService(IMediator mediator, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _mediator = mediator;
             _mapper = mapper;
         }
         public async Task<ResponseWrapper<int>> AddAccountHolderAsync(CreateAccountHolder createAccountHolder)
         {
-            //// Assuming CreateAccountHolder is a DTO, map it to the AccountHolder entity
-            //var accountHolderEntity = _mapper.Map<AccountHolder>(createAccountHolder);          
 
-            //// Add the entity to the DbContext
-            //var response = await _context.AccountHolders.AddAsync(accountHolderEntity);
-            //await _context.SaveChangesAsync();
+            //var accountHolderEntity = _mapper.Map<AccountHolder>(createAccountHolder);
 
-            //// Use the ToResponse extension method to convert to ResponseWrapper<int>
-            //return new ResponseWrapper<int>().Success(response.Entity.Id, "Account holder added successfully.");
+            //var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
+            //await writeRepo.AddAsync(accountHolderEntity);
+            //await _unitOfWork.CommitAsync(CancellationToken.None);
 
-            var accountHolderEntity = _mapper.Map<AccountHolder>(createAccountHolder);
+            //return new ResponseWrapper<int>().Success(accountHolderEntity.Id, "Account holder added successfully.");
+            // Map DTO to entity
 
-            var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
-            await writeRepo.AddAsync(accountHolderEntity);
-            await _unitOfWork.CommitAsync(CancellationToken.None);
+            //var accountHolderEntity = _mapper.Map<AccountHolder>(createAccountHolder);
 
-            return new ResponseWrapper<int>().Success(accountHolderEntity.Id, "Account holder added successfully.");
-        }
+            //// Get the read repository
+            //var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
 
-        public async Task<ResponseWrapper<int>> DeleteAccountHolderAsync(int id)
-        {
-            //var accountHolder = await _context.AccountHolders.FindAsync(id);
+            //// Check if an account holder with the same unique identifier exists
+            //var existingEmail = await readRepo.Entities
+            //    .FirstOrDefaultAsync(a => a.Email == accountHolderEntity.Email); // Adjust the condition to your unique identifier
 
-            //if (accountHolder == null)
+            //if (existingEmail != null)
             //{
-            //    return new ResponseWrapper<int>().Failed("Account holder not found.");
+            //    return new ResponseWrapper<int>().Failed("Account holder with the same email already exists.");
             //}
 
-            //_context.AccountHolders.Remove(accountHolder);
-            //await _context.SaveChangesAsync();
+            //// Add new account holder
+            //var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
+            //await writeRepo.AddAsync(accountHolderEntity);
+            //await _unitOfWork.CommitAsync(CancellationToken.None);
 
-            //return new ResponseWrapper<int>().Success(id, "Account holder deleted successfully.");
-            var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
-            var accountHolder = await readRepo.GetAsync(id);
+            //return new ResponseWrapper<int>().Success(accountHolderEntity.Id, "Account holder added successfully.");
 
-            if (accountHolder == null)
+            var command = new CreateAccountHolderCommand()
             {
-                return new ResponseWrapper<int>().Failed("Account holder not found.");
-            }
+                CreateAccountHolder = createAccountHolder
+            };
 
-            var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
-            await writeRepo.DeleteAsync(accountHolder);
-            await _unitOfWork.CommitAsync(CancellationToken.None);
-
-            return new ResponseWrapper<int>().Success(id, "Account holder deleted successfully.");
+            var result = await _mediator.Send(command);
+            return result;
         }
 
-        public async Task<ResponseWrapper<AccountHolderResponse>> GetAccountHolderAsync(int id)
-        {
-            //var accountHolder = await _context.AccountHolders.FindAsync(id);
+        //public async Task<ResponseWrapper<int>> DeleteAccountHolderAsync(int id)
+        //{           
+        //    //var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
+        //    //var accountHolder = await readRepo.GetAsync(id);
 
-            //if (accountHolder == null)
-            //{
-            //    return new ResponseWrapper<AccountHolderResponse>().Failed("Account holder not found.");
-            //}
+        //    //if (accountHolder == null)
+        //    //{
+        //    //    return new ResponseWrapper<int>().Failed("Account holder not found.");
+        //    //}
 
-            //var accountHolderResponse = _mapper.Map<AccountHolderResponse>(accountHolder);
+        //    //var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
+        //    //await writeRepo.DeleteAsync(accountHolder);
+        //    //await _unitOfWork.CommitAsync(CancellationToken.None);
 
-            //return new ResponseWrapper<AccountHolderResponse>().Success(accountHolderResponse);
+        //    //return new ResponseWrapper<int>().Success(id, "Account holder deleted successfully.");
 
-            var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
-            var accountHolder = await readRepo.GetAsync(id);
 
-            if (accountHolder == null)
-            {
-                return new ResponseWrapper<AccountHolderResponse>().Failed("Account holder not found.");
-            }
+        //}
 
-            var accountHolderResponse = _mapper.Map<AccountHolderResponse>(accountHolder);
+        //public async Task<ResponseWrapper<AccountHolderResponse>> GetAccountHolderAsync(int id)
+        //{            
 
-            return new ResponseWrapper<AccountHolderResponse>().Success(accountHolderResponse);
-        }
+        //    var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
+        //    var accountHolder = await readRepo.GetAsync(id);
+
+        //    if (accountHolder == null)
+        //    {
+        //        return new ResponseWrapper<AccountHolderResponse>().Failed("Account holder not found.");
+        //    }
+
+        //    var accountHolderResponse = _mapper.Map<AccountHolderResponse>(accountHolder);
+
+        //    return new ResponseWrapper<AccountHolderResponse>().Success(accountHolderResponse);
+        //}
 
         public async Task<ResponseWrapper<List<AccountHolderResponse>>> GetAllAccountHolderAsync()
         {
-            //var accountHolders = await _context.AccountHolders.ToListAsync();
+            //var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
+            //var accountHolders = await readRepo.GetAllAsync();
             //var accountHolderResponses = _mapper.Map<List<AccountHolderResponse>>(accountHolders);
 
             //return new ResponseWrapper<List<AccountHolderResponse>>().Success(accountHolderResponses);
+                        
 
-            var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
-            var accountHolders = await readRepo.GetAllAsync();
-            var accountHolderResponses = _mapper.Map<List<AccountHolderResponse>>(accountHolders);
+            var query = new GetAllAccountHolderQuery();
+            var result = await _mediator.Send(query);
+            return result;
 
-            return new ResponseWrapper<List<AccountHolderResponse>>().Success(accountHolderResponses);
         }
     }
 }
