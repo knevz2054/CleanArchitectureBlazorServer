@@ -1,0 +1,66 @@
+﻿@page "/account-holders"
+@using CleanArchitectureBlazorServer.Web.Services
+@using Common.Responses
+@inject ISnackbar SnackBar
+@inject NavigationManager Navigation
+@inject IAccountHoldersService ConnectAccount
+@inject IDialogService Dialog
+
+<MudToolBar DisableGutters="true" WrapContent="true">
+    <MudSpacer />
+    <MudButton OnClick="OnCreateAccountHolderClick" Variant="Variant.Outlined" Color="Color.Primary" Class="ms-1">Create Account Holder</MudButton>
+</MudToolBar>
+<MudTable Items="@AccountHolders.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>First Name</MudTh>
+        <MudTh>Last Name</MudTh>
+        <MudTh>Date Of Birth</MudTh>
+        <MudTh>Contact Number</MudTh>
+        <MudTh>Email</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+        <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+        <MudTd DataLabel="Date Of Birth">@context.DateOfBirth</MudTd>
+        <MudTd DataLabel="Contact Number">@context.ContactNumber</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+@code {
+    List<AccountHolderResponse> AccountHolders { get; set; } = [];
+    bool _loading = true;
+    protected async override Task OnInitializedAsync()
+    {
+        var response = await ConnectAccount.GetAllAccountHolderAsync();
+        if (response.IsSuccessful)
+        {
+            AccountHolders = response.Data;
+        }
+        else
+        {
+            foreach (var message in response.Messages)
+            {
+                SnackBar.Add(message, Severity.Error);
+            }
+        }
+        _loading = false;
+    }
+
+
+    async Task OnCreateAccountHolderClick()
+    {
+        var parameters = new DialogParameters();
+        var dialog = await Dialog.ShowAsync<AccountHoldersCreate>("Add Campus", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var response = await ConnectAccount.GetAllAccountHolderAsync();
+            if (response.IsSuccessful)
+            {
+                AccountHolders = response.Data;
+            }
+        }
+    }
+}
