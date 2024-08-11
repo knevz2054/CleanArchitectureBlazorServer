@@ -1,0 +1,30 @@
+﻿@using CleanArchitectureBlazorServer.Common.Responses
+@if (Model != null)
+{
+    <MudSimpleTable Elevation="0" Class="details mb-10">
+        <tbody>
+            <tr>
+                <td style="width: 200px;">Name</td>
+                <td>@($"{Model.FirstName} {Model.LastName}")</td>
+            </tr>
+            <tr>
+                <td style="width: 200px;">Birthday</td>
+                <td>@Model.DateOfBirth.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <td style="width: 200px;">Contact Number</td>
+                <td>@Model.ContactNumber</td>
+            </tr>
+            <tr>
+                <td style="width: 200px;">Email Address</td>
+                <td>@Model.Email</td>
+            </tr>
+           
+        </tbody>
+    </MudSimpleTable>
+}
+
+@code {
+    [Parameter]
+    public AccountHolderResponse? Model { get; set; }
+}

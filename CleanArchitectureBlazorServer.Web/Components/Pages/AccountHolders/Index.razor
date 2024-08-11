@@ -12,15 +12,15 @@
 </MudToolBar>
 <MudTable Items="@AccountHolders" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
     <HeaderContent>
-        <MudTh>First Name</MudTh>
-        <MudTh>Last Name</MudTh>
+        <MudTh>Name</MudTh>
         <MudTh>Date Of Birth</MudTh>
         <MudTh>Contact Number</MudTh>
         <MudTh>Email</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="First Name">@context.FirstName</MudTd>
-        <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+        <MudTd DataLabel="Name">
+            <MudLink Href="@($"account-holders/{context.Id}")">@($"{context.FirstName} {context.LastName}")</MudLink>
+        </MudTd>
         <MudTd DataLabel="Date Of Birth">@context.DateOfBirth</MudTd>
         <MudTd DataLabel="Contact Number">@context.ContactNumber</MudTd>
         <MudTd DataLabel="Email">@context.Email</MudTd>
@@ -52,7 +52,7 @@
     async Task OnCreateAccountHolderClick()
     {
         var parameters = new DialogParameters();
-        var dialog = await Dialog.ShowAsync<AccountHoldersCreate>("Add Campus", parameters);
+        var dialog = await Dialog.ShowAsync<AccountHoldersCreate>("Add Account Holder", parameters);
         var result = await dialog.Result;
         if (!result.Canceled)
         {

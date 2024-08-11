@@ -1,0 +1,55 @@
+﻿@using CleanArchitectureBlazorServer.Common.Models
+@using CleanArchitectureBlazorServer.Common.Responses
+@using CleanArchitectureBlazorServer.Web.Services
+@using CleanArchitectureBlazorServer.Web.Shared
+@inject ISnackbar Snackbar
+@inject IAccountHoldersService ConnectAccount
+@inject NavigationManager Navigation
+
+@if (Model != null)
+{
+    <EditForm OnValidSubmit="Submit" Model="Model">
+        <MudDialog>
+            <DialogContent>
+                <MudText Typo="Typo.body1">Are you sure you want to remove Account Holder @($"{Model.FirstName} {Model.LastName}")?</MudText>
+            </DialogContent>
+            <DialogActions>
+                <LoadingButton Loading="loading" Label="Delete" Color="Color.Error" />
+                <MudButton OnClick="Cancel">Close</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </EditForm>
+}
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance? Dialog { get; set; }
+
+    [Parameter]
+    public AccountHolderResponse? Model { get; set; }
+
+    bool loading = false;
+
+    void Cancel() => Dialog?.Cancel();
+
+    async Task Submit()
+    {
+        loading = true;
+
+        try
+        {
+            if (Model != null)
+                await ConnectAccount.DeleteAccountHolderAsync(Model.Id);
+
+            Snackbar.Add($"Account Holder {Model.FirstName} {Model.LastName}Removed", Severity.Success);
+            Dialog?.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Account Holder Removed Error: " + ex.Message);
+            Snackbar.Add("Error on Removing Account Holder", Severity.Error);
+        }
+
+        loading = false;
+    }
+}

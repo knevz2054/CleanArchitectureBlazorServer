@@ -1,0 +1,133 @@
+﻿@page "/account-holders/{Id}/{Tab?}"
+@using CleanArchitectureBlazorServer.Common.Models
+@using CleanArchitectureBlazorServer.Common.Requests
+@using CleanArchitectureBlazorServer.Common.Responses
+@using CleanArchitectureBlazorServer.Common.Wrapper
+@using CleanArchitectureBlazorServer.Web.Services
+@inject NavigationManager Navigation
+@inject IDialogService Dialog
+@inject IAccountHoldersService ConnectAccount
+@inject ISnackbar SnackBar
+
+<PageTitle>
+    @if (Model != null)
+    {
+        if (Tab != "edit")
+            @($"Account Holder: {Model.FirstName} {Model.LastName} | Details")
+        else
+            @($"Account Holder: {Model.FirstName} {Model.LastName} | Edit")
+    }
+</PageTitle>
+
+
+@if (loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+}
+
+@if (Model != null)
+{
+    <MudToolBar DisableGutters="true" WrapContent="true">
+        <MudText Typo="Typo.h5">@($"{Model.FirstName} {Model.LastName}")</MudText>
+        <MudSpacer />
+        <MudButtonGroup Variant="Variant.Outlined">
+            <MudButton Href="/account-holders" StartIcon="@Icons.Material.Filled.ChevronLeft" Variant="Variant.Outlined" Size="Size.Small">
+                <MudText Color="Color.Default">Account Holders</MudText>
+            </MudButton>
+            @if (Tab != "edit")
+            {
+                <MudButton OnClick="() => OnDeleteClick(Model.Id)" Variant="Variant.Outlined" Color="Color.Error" Class="ms-1" Size="Size.Small">
+                    <MudText Color="Color.Error">Delete</MudText>
+                </MudButton>
+            }
+        </MudButtonGroup>
+
+    </MudToolBar>
+
+    <MudTabs ActivePanelIndex="activeTab" ActivePanelIndexChanged="OnActiveRouteIndexChanged"
+             ApplyEffectsToContainer="true" Elevation="1" Rounded="true" PanelClass="pa-6">
+        <MudTabPanel Text="Details">
+            <AccountHoldersDetails Model="Model"></AccountHoldersDetails>
+        </MudTabPanel>
+       @*  <MudTabPanel Text="Edit">
+            <CampusesUpdate User="User" Model="Model" OnUpdated="OnUpdated"></CampusesUpdate>
+        </MudTabPanel> *@
+    </MudTabs>
+}
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public string? Tab { get; set; }   
+
+    AccountHolderResponse? Model;
+    int activeTab = 0;
+    bool loading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        var response = await ConnectAccount.GetAccountHolderAsync(int.Parse(Id));
+        if (response.IsSuccessful)
+        {
+            Model = response.Data;
+        }
+        else
+        {
+            foreach (var message in response.Messages)
+            {
+                SnackBar.Add(message, Severity.Error);
+            }
+        }
+
+        loading = false;
+    }    
+
+    protected override void OnParametersSet()
+    {
+        activeTab = Tab switch { "edit" => 1, _ => 0 };
+    }
+
+    void OnActiveRouteIndexChanged(int index)
+    {
+        if (activeTab != index)
+        {
+            activeTab = index;
+            Navigation.NavigateTo(index switch
+            {
+                1 => $"/account-holders/{Id}/edit",
+                _ => $"/account-holders/{Id}",
+            });
+        }
+    }
+    void OnUpdated(AccountHolderResponse model) => Model = model;
+
+    async Task OnDeleteClick(int Id)
+    {
+        var response = await ConnectAccount.GetAccountHolderAsync(Id);
+        if (response.IsSuccessful)
+        {
+            Model = response.Data;
+        }
+        else
+        {
+            foreach (var message in response.Messages)
+            {
+                SnackBar.Add(message, Severity.Error);
+            }
+        }
+        var parameters = new DialogParameters();
+        parameters.Add(nameof(AccountHoldersDelete.Model), Model);
+
+        var dialog = await Dialog.ShowAsync<AccountHoldersDelete>("Delete Account Holder", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {           
+            Navigation.NavigateTo("/account-holders");
+        }
+
+    }
+}

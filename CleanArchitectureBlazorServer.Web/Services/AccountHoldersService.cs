@@ -34,40 +34,27 @@ namespace CleanArchitectureBlazorServer.Web.Services
             return result;
         }
 
-        //public async Task<ResponseWrapper<int>> DeleteAccountHolderAsync(int id)
-        //{           
-        //    //var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
-        //    //var accountHolder = await readRepo.GetAsync(id);
+        public async Task<ResponseWrapper<int>> DeleteAccountHolderAsync(int id)
+        {         
 
-        //    //if (accountHolder == null)
-        //    //{
-        //    //    return new ResponseWrapper<int>().Failed("Account holder not found.");
-        //    //}
+            var delete = new DeleteAccountHolderCommand()
+            {
+                Id = id
+            };
+            var result = await _mediator.Send(delete);
+            return result;
+        }
 
-        //    //var writeRepo = _unitOfWork.WriteRepositoryFor<AccountHolder>();
-        //    //await writeRepo.DeleteAsync(accountHolder);
-        //    //await _unitOfWork.CommitAsync(CancellationToken.None);
+        public async Task<ResponseWrapper<AccountHolderResponse>> GetAccountHolderAsync(int id)
+        {
+            var query = new GetAccountHolderQuery()
+            {
+                Id = id
+            };
+            var result = await _mediator.Send(query);
+            return result;
 
-        //    //return new ResponseWrapper<int>().Success(id, "Account holder deleted successfully.");
-
-
-        //}
-
-        //public async Task<ResponseWrapper<AccountHolderResponse>> GetAccountHolderAsync(int id)
-        //{            
-
-        //    var readRepo = _unitOfWork.ReadRepositoryFor<AccountHolder>();
-        //    var accountHolder = await readRepo.GetAsync(id);
-
-        //    if (accountHolder == null)
-        //    {
-        //        return new ResponseWrapper<AccountHolderResponse>().Failed("Account holder not found.");
-        //    }
-
-        //    var accountHolderResponse = _mapper.Map<AccountHolderResponse>(accountHolder);
-
-        //    return new ResponseWrapper<AccountHolderResponse>().Success(accountHolderResponse);
-        //}
+        }
 
         public async Task<ResponseWrapper<List<AccountHolderResponse>>> GetAllAccountHolderAsync()
         {
@@ -82,6 +69,17 @@ namespace CleanArchitectureBlazorServer.Web.Services
             var result = await _mediator.Send(query);
             return result;
 
+        }
+
+        public async Task<ResponseWrapper<int>> UpdateAccountHolderAsync(UpdateAccountHolder updateAccountHolder)
+        {
+            var command = new UpdateAccountHolderCommand()
+            {
+                UpdateAccountHolder = updateAccountHolder
+            };
+
+            var result = await _mediator.Send(command);
+            return result;
         }
     }
 }
