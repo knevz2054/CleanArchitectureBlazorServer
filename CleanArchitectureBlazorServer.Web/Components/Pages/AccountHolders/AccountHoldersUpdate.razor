@@ -1,5 +1,84 @@
-﻿<h3>AccountHoldersUpdate</h3>
+﻿@using AutoMapper
+@using CleanArchitectureBlazorServer.Common.Requests
+@using CleanArchitectureBlazorServer.Common.Responses
+@using CleanArchitectureBlazorServer.Web.Services
+@using CleanArchitectureBlazorServer.Web.Shared
+@inject ISnackbar Snackbar
+@inject IAccountHoldersService ConnectAccount
+@inject NavigationManager Navigation
+@inject IMapper Mapper
 
+@if (UpdateModel != null)
+{
+    <EditForm OnValidSubmit="Submit" Model="UpdateModel">
+        <DataAnnotationsValidator />
+        <MudText Color="@Color.Error">@error</MudText>
+        <MudTextField @bind-Value="UpdateModel.FirstName" For="@(() => UpdateModel.FirstName)" Label="First Name" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField @bind-Value="UpdateModel.LastName" For="@(() => UpdateModel.LastName)" Label="Last Name" Variant="Variant.Outlined"></MudTextField>
+        <MudDatePicker @bind-Date="dateofBirth" For="@(() => dateofBirth)" Label="Birthday" Variant="Variant.Outlined"></MudDatePicker>
+        <MudTextField @bind-Value="UpdateModel.ContactNumber" For="@(() => UpdateModel.ContactNumber)" Label="Contact Number" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField @bind-Value="UpdateModel.Email" For="@(() => UpdateModel.Email)" Label="Email Address" Variant="Variant.Outlined"></MudTextField>
+        <div class="d-flex justify-end mt-3">
+            <LoadingButton Loading="loading" Label="Update" Variant="Variant.Filled" />
+        </div>
+    </EditForm>
+}
 @code {
+    [CascadingParameter]
+    MudDialogInstance? Dialog { get; set; }
 
+    [Parameter]
+    public EventCallback<AccountHolderResponse> OnUpdated { get; set; }   
+    [Parameter]
+    public AccountHolderResponse? Model { get; set; }
+
+    UpdateAccountHolder? UpdateModel;
+    DateTime? dateofBirth = new DateTime();
+    string error { get; set; } = "";
+    private bool loading;
+
+    protected override void OnInitialized()
+    {
+        UpdateModel = Mapper.Map<UpdateAccountHolder>(Model);
+        dateofBirth = UpdateModel.DateOfBirth;
+    }
+
+    void Cancel() => Dialog?.Cancel();
+
+    async Task Submit()
+    {
+        loading = true;
+        error = "";
+
+        try
+        {
+            if (UpdateModel != null)
+            {
+                UpdateModel.DateOfBirth = dateofBirth.Value;
+                var response = await ConnectAccount.UpdateAccountHolderAsync(UpdateModel);
+                if (response.IsSuccessful)
+                {
+                    Snackbar.Add(response.Messages[0], Severity.Success);
+                }
+                else
+                {
+                    foreach (var message in response.Messages)
+                    {
+                        Snackbar.Add(message, Severity.Error);
+                    }
+                }
+                Snackbar.Add("Update Successful.", Severity.Success);
+                Dialog?.Close(DialogResult.Ok(response));
+                Navigation.NavigateTo("/account-holders");
+            }
+           
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+
+        loading = false;
+
+    }
 }

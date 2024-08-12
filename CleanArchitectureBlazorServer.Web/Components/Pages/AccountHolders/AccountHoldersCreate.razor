@@ -9,25 +9,11 @@
         <DialogContent>
             <DataAnnotationsValidator />
             <MudText Color="@Color.Error">@error</MudText>
-            <MudGrid Spacing="1">
-                <MudItem xs="12" sm="4" md="4">
-                    <MudTextField @bind-Value="request.FirstName" For="@(() => request.FirstName)" Label="First Name" Variant="Variant.Outlined"></MudTextField>
-                </MudItem>
-                <MudItem xs="12" sm="4" md="4">                  
-                    <MudTextField @bind-Value="request.LastName" For="@(() => request.LastName)" Label="Last Name" Variant="Variant.Outlined"></MudTextField>
-                </MudItem>
-                <MudItem xs="12" sm="4" md="4">                    
-                    <MudDatePicker @bind-Value="Birthday" For="@(() => Birthday)" Label="Birthday" Variant="Variant.Outlined"></MudDatePicker>
-                </MudItem>
-            </MudGrid>
-            <MudGrid Spacing="1">
-                <MudItem xs="12" sm="6" md="6">
-                    <MudTextField @bind-Value="request.ContactNumber" For="@(() => request.ContactNumber)" Label="Contact Number" Variant="Variant.Outlined"></MudTextField>
-                </MudItem>
-                <MudItem xs="12" sm="4" md="4">
-                    <MudTextField @bind-Value="request.Email" For="@(() => request.Email)" Label="Email Address" Variant="Variant.Outlined"></MudTextField>
-                </MudItem>              
-            </MudGrid>
+            <MudTextField @bind-Value="request.FirstName" For="@(() => request.FirstName)" Label="First Name" Variant="Variant.Outlined"></MudTextField>
+            <MudTextField @bind-Value="request.LastName" For="@(() => request.LastName)" Label="Last Name" Variant="Variant.Outlined"></MudTextField>
+            <MudDatePicker @bind-Value="Birthday" For="@(() => Birthday)" Label="Birthday" Variant="Variant.Outlined"></MudDatePicker>
+            <MudTextField @bind-Value="request.ContactNumber" For="@(() => request.ContactNumber)" Label="Contact Number" Variant="Variant.Outlined"></MudTextField>
+            <MudTextField @bind-Value="request.Email" For="@(() => request.Email)" Label="Email Address" Variant="Variant.Outlined"></MudTextField>            
         </DialogContent>
         <DialogActions>
             <LoadingButton Loading="loading" />

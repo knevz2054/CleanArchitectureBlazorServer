@@ -11,6 +11,8 @@ namespace CleanArchitectureBlazorServer.Web.Mapping
         {
             CreateMap<CreateAccountHolder, AccountHolder>();
             CreateMap<AccountHolder, AccountHolderResponse>();
+
+            CreateMap<AccountHolderResponse, UpdateAccountHolder>();
         }
     }
 }

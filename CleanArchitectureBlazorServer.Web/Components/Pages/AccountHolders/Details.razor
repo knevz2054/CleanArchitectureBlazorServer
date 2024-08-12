@@ -1,4 +1,5 @@
 ﻿@page "/account-holders/{Id}/{Tab?}"
+@using AutoMapper
 @using CleanArchitectureBlazorServer.Common.Models
 @using CleanArchitectureBlazorServer.Common.Requests
 @using CleanArchitectureBlazorServer.Common.Responses
@@ -8,7 +9,7 @@
 @inject IDialogService Dialog
 @inject IAccountHoldersService ConnectAccount
 @inject ISnackbar SnackBar
-
+@inject IMapper Mapper
 <PageTitle>
     @if (Model != null)
     {
@@ -49,9 +50,9 @@
         <MudTabPanel Text="Details">
             <AccountHoldersDetails Model="Model"></AccountHoldersDetails>
         </MudTabPanel>
-       @*  <MudTabPanel Text="Edit">
-            <CampusesUpdate User="User" Model="Model" OnUpdated="OnUpdated"></CampusesUpdate>
-        </MudTabPanel> *@
+        <MudTabPanel Text="Edit">
+            <AccountHoldersUpdate Model="Model" OnUpdated="OnUpdated"></AccountHoldersUpdate>
+        </MudTabPanel>
     </MudTabs>
 }
 
@@ -60,7 +61,7 @@
     public string? Id { get; set; }
 
     [Parameter]
-    public string? Tab { get; set; }   
+    public string? Tab { get; set; }
 
     AccountHolderResponse? Model;
     int activeTab = 0;
@@ -83,7 +84,7 @@
         }
 
         loading = false;
-    }    
+    }
 
     protected override void OnParametersSet()
     {
@@ -125,7 +126,7 @@
         var result = await dialog.Result;
 
         if (!result.Canceled)
-        {           
+        {
             Navigation.NavigateTo("/account-holders");
         }
 
