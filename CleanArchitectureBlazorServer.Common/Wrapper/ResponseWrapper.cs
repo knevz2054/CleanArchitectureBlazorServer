@@ -15,8 +15,9 @@ namespace CleanArchitectureBlazorServer.Common.Wrapper
         public ResponseWrapper<T> Success(T data, string message = null)
         {
             IsSuccessful = true;
-            Messages = [message];
+            //Messages = [message];
             //Messages = new List<string> { message };
+            Messages = message == null ? new List<string>() : new List<string> { message };
             Data = data;
 
             return this;
@@ -25,7 +26,8 @@ namespace CleanArchitectureBlazorServer.Common.Wrapper
         public ResponseWrapper<T> Failed(string message)
         {
             IsSuccessful = false;
-            Messages = [message];
+            Messages = new List<string> { message };
+            //Messages = [message];
             //Messages = new List<string> { message };
             return this;
         }
