@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CleanArchitectureBlazorServer.Common\CleanArchitectureBlazorServer.Common.csproj" />
     <ProjectReference Include="..\CleanArchitectureBlazorServer.Infrastructure\CleanArchitectureBlazorServer.Infrastructure.csproj" />
+    <ProjectReference Include="..\CleanArchitectureBlazorServer.Services\CleanArchitectureBlazorServer.Services.csproj" />
   </ItemGroup>
 
 </Project>

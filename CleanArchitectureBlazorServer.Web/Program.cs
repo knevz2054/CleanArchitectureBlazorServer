@@ -2,8 +2,8 @@ using CleanArchitectureBlazorServer.Web.Components;
 using CleanArchitectureBlazorServer.Infrastructure;
 using CleanArchitectureBlazorServer.Application;
 using MudBlazor.Services;
-using CleanArchitectureBlazorServer.Web.Services;
 using CleanArchitectureBlazorServer.Web.Mapping;
+using CleanArchitectureBlazorServer.Services.AccountHoldersServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
