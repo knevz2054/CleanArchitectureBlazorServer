@@ -139,26 +139,31 @@ namespace CleanArchitectureBlazorServer.Tests.AccountHolders
             Assert.NotNull(model);
             Assert.Equal(created.Data, model.Data.Id);
 
-            //// DELETE
-            //var deleteModel = await _service.DeleteAccountHolderAsync(model.Data.Id);
-            //Assert.NotNull(deleteModel);
-            //Assert.True(deleteModel.IsSuccessful);
-
             // DELETE
-            var deleteAct = () => _service.DeleteAccountHolderAsync(model.Data.Id);
-            var deleteEx = await Record.ExceptionAsync(deleteAct);
-            Assert.Null(deleteEx);
+            var deleteModel = await _service.DeleteAccountHolderAsync(model.Data.Id);
+            Assert.NotNull(deleteModel);
+            Assert.True(deleteModel.IsSuccessful);
+
+            //// DELETE
+            //var deleteAct = () => _service.DeleteAccountHolderAsync(model.Data.Id);
+            //var deleteEx = await Record.ExceptionAsync(deleteAct);
+            //Assert.Null(deleteEx);
 
             // Update mock data after deletion
-            _mediatorMock
-                .Setup(m => m.Send(It.IsAny<GetAllAccountHolderQuery>(), default))
-                .ReturnsAsync(new ResponseWrapper<List<AccountHolderResponse>>().Success(new List<AccountHolderResponse>())); // Empty list after deletion
+            UpdateMockDataAfterDelete();
 
             // GET All after delete
             models = await _service.GetAllAccountHolderAsync();
             Assert.NotNull(models);
             Assert.True(models.IsSuccessful);
             Assert.DoesNotContain(models.Data, x => x.Id == model.Data.Id);
+        }
+
+        private void UpdateMockDataAfterDelete()
+        {
+            _mediatorMock
+                .Setup(m => m.Send(It.IsAny<GetAllAccountHolderQuery>(), default))
+                .ReturnsAsync(new ResponseWrapper<List<AccountHolderResponse>>().Success(new List<AccountHolderResponse>())); // Empty list after deletion
         }
     }
 
